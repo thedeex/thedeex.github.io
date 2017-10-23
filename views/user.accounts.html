@@ -1,0 +1,56 @@
+<!-- ######################## USER ACCOUNTS: -->
+
+<div class="whiteTextRegular">
+    <div id="defaultAccount" ng-hide="noAccountsDetected">
+        <hr>
+        <h3>your default account:</h3>
+        <div ng-show="defaultAccount">
+            <h5><strong>
+                <a href=""
+                   ng-href="{{contractDeployed[currentNetwork.network_id].etherscanLinkPrefix}}address/{{defaultAccount}}"
+                   target="_blank" title="Click to see this account history on etherscan.io">
+                    {{defaultAccount}}
+                </a></strong></h5>
+            <span ng-show="isContractManager">(is manager of this smart contract)</span>
+            balance: <span>&nbsp;&nbsp;ETH &nbsp;</span>
+            <a href="" ng-click="refreshBalances()" title="Click to refresh">
+                {{etherOnAccountOnBlockchain[defaultAccount]}}
+            </a>&nbsp;and&nbsp;
+            <strong>
+                <a href="" ng-click="refreshBalances()" title="Click to refresh">
+                    {{balanceOf[defaultAccount]}}
+                </a>
+            </strong>
+            tokens
+        </div>
+
+        <div ng-hide="defaultAccount">
+            Default account not set
+        </div>
+
+    </div>
+    <div id="allAccounts" ng-hide="noAccountsDetected">
+        <h3>All accounts (click to set as default):</h3>
+        <!-- eth_accounts (web3.eth.accounts) shold work in MetaMask as synchronous method -->
+        <div ng-show="web3.eth.accounts.length > 0">
+
+            <!--<div ng-repeat="acc in web3.eth.accounts">-->
+            <div ng-repeat="acc in accountsArray">
+                <div ng-click="setDefaultAccount(acc)" title="Click to set as default">
+                    <a href="" style="font-family: Courier, monospace">
+                        ({{$index}}) {{acc}} : ETH {{etherOnAccountOnBlockchain[acc]}}
+                        : {{balanceOf[acc]}} token(s)
+                        <br>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+        <!-- eth_accounts (web3.eth.accounts) shold work in MetaMask as synchronous method -->
+        <div ng-hide="web3.eth.accounts.length < 1">
+            <!--other accounts are not available-->
+        </div>
+        <br>
+        <button ng-click="refreshBalances()" class="btn btn-default">Refresh accounts data</button>
+    </div>
+</div>

@@ -1,0 +1,78 @@
+<div id="buyTokensDirective" class="whiteTextRegular">
+
+    <div class="row" ng-hide="noAccountsDetected">
+
+        <div class="col-xs-6">
+            <div id="buyTokens">
+                <h4><strong>Buy Tokens:</strong></h4>
+
+                <form>
+
+                    <!--<div class="input-group">-->
+                    <!--quantity: <br>-->
+                    <!--<input type="number" ng-model="quantityToBuy" class="form-control">-->
+                    <!--</div>-->
+                    <!---->
+                    <!--<div class="input-group">-->
+                    <!--price (ETH): <br>-->
+                    <!--<input type="number" ng-model="priceToBuy" class="form-control" disabled>-->
+                    <!--</div>-->
+
+                    <!--<div class="input-group">-->
+                    <!--sum (ETH): <br>-->
+                    <!--&lt;!&ndash; see: http://stackoverflow.com/questions/26293769/how-to-parseint-in-angular-js &ndash;&gt;-->
+                    <!--<input type="number"-->
+                    <!--value="{{(quantityToBuy-0) * (priceToBuy-0)}}"-->
+                    <!--class="form-control"-->
+                    <!--disabled>-->
+                    <!--</div>                -->
+
+                    <div class="input-group">
+                        sum (Wei): <br>
+                        <!-- see: http://stackoverflow.com/questions/26293769/how-to-parseint-in-angular-js -->
+                        <input type="number" ng-model="sumWei" class="form-control" name="sumWei" size="50">
+                    </div>
+
+                    <div class="input-group">
+                        referrer (optional): <br>
+                        <input type="text" ng-model="referrer" class="form-control" name="referrer" size="50">
+                    </div>
+
+                    <br>
+                    <button ng-click="buyTokensWithReferrerAddress()"
+                            ng-class="{disabled: buyTokensTxInProgress}"
+                            class="btn btn-default">
+                        Buy tokens!
+                    </button>
+                    <span ng-show="buyTokensTxInProgress" title="loading...">
+                            <i class="fa fa-refresh fa-spin fa-fw"></i>
+                        </span>
+                </form>
+
+                <br>
+                <div class="alert alert-success alert-dismissible" role="alert" ng-show="buyTokensSuccess">
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span ng-click="buyTokensSuccess=null">&times;</span>
+                    </button>
+                    {{buyTokensSuccess}}<br>
+                    <a ng-href="{{contractDeployed[currentNetwork.network_id].etherscanLinkPrefix}}/tx/{{buyTokensSuccessTx}}" target="_blank">
+                        transaction data
+                    </a>
+                </div>
+
+                <div class="alert alert-danger alert-dismissible" role="alert" ng-show="buyTokensError">
+                    <br>
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span ng-click="buyTokensError=null">&times;</span>
+                    </button>
+                    {{buyTokensError}}
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>

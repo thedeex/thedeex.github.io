@@ -1,0 +1,13 @@
+<div id="transactions" ng-hide="noAccountsDetected" class="whiteTextRegular">
+    <h3>transactions:</h3>
+    <a ng-href="{{contractDeployed[currentNetwork.network_id].etherscanLinkPrefix}}/tx/{{lastTxId}}">{{lastTxId}}</a>
+    <br>
+    <button ng-click="showAllTransactions=!showAllTransactions" class="btn btn-default">
+        show/hide last transactions in this session
+    </button>
+    <br>
+    <div ng-show="showAllTransactions" ng-repeat="tx in transactions">
+        <a ng-href="{{contractDeployed[currentNetwork.network_id].etherscanLinkPrefix}}/tx/{{tx}}">{{tx}}</a>
+        <br>
+    </div>
+</div>
