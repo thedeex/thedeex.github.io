@@ -5,6 +5,19 @@ angular.element(document.getElementById('tokensCtrl')).scope();
 
 <div id="tokensCtrl">
     <br>
+    <div class="container error-message" ng-hide="currentNetwork.connected">
+        <div class="row">
+            <div class="col-lg-12">
+                <center>
+                    <!--<div class="card card-block">-->
+                    <md ng-include="'/views/noEthereumNodeConnectionMessage.md'"></md>
+                    <!--</div>-->
+                </center>
+            </div>
+        </div>
+    </div>
+
+
     <div class="container greyTransparentBackground">
 
         <div class="row">
@@ -43,11 +56,8 @@ angular.element(document.getElementById('tokensCtrl')).scope();
         <hr>
 
         <transactions></transactions>
-
-
     </div>
-
-
     <footer></footer>
+    <br>
 
 </div>

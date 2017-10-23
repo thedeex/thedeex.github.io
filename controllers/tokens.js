@@ -64,7 +64,6 @@ app.controller('tokens', [
 
         if ($rootScope.web3.isConnected()) {
 
-
             $rootScope.web3.version.getNetwork(function (error, result) {
                 if (error) {
                     $scope.alertDanger = error;

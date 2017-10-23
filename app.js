@@ -138,7 +138,8 @@ app.run([
             $rootScope.currentNetwork = {
                 'network_id': '', // integer
                 'node': '',
-                'ethereumProtocolVersion': ''
+                'ethereumProtocolVersion': '',
+                'connected': false
             };
 
             // check if web3 is connected to Ethereum node:
@@ -146,7 +147,9 @@ app.run([
             // geth --fast --cache=1048 --testnet --rpc --rpcapi "eth,net,web3" --rpccorsdomain '*' --rpcaddr localhost --rpcport 8545
             if ($rootScope.web3.isConnected()) {
 
-                // $rootScope.web3isConnected = true;
+                $rootScope.currentNetwork.connected = true;
+                $rootScope.$apply();
+
                 $log.debug('web3 is connected to Ethereum node:');
 
                 $rootScope.web3.version.getNode(function (error, result) {
@@ -154,6 +157,7 @@ app.run([
                         $log.debug(error);
                     } else {
                         $rootScope.currentNetwork.node = result;
+
                         $rootScope.$apply();
                         $log.debug('web3.version.node: ' + $rootScope.currentNetwork.node);
                         // "Geth/v1.7.2-stable-1db4ecdc/linux-amd64/go1.9"

@@ -32,3 +32,12 @@ footer {
     /*letter-spacing: 1px;*/
     /*line-height: 28px;*/
 }
+
+.error-message {
+    /*background: rgba(250, 0, 0, 0.6);*/
+    background: rgba(250, 0, 0, 0.7);
+    color: white;
+    overflow: hidden;
+    font-size: 20px;
+    /*line-height: 25px;*/
+}
