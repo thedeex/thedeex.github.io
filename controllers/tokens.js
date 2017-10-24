@@ -50,14 +50,16 @@ app.controller('tokens', [
             '3': {
                 'network': 'Ropsten',
                 // 'address': '0xc0eb1167f32e0ba556c539d2cf198dcc3f766d65',
-                'address': '0x3f17f0cfbd825f81e73b65f0257aa126a46d65a6',
-                'onBlock': 1919585,
+                // 'address': '0x3f17f0cfbd825f81e73b65f0257aa126a46d65a6',
+                'address': '0xdb6d4d030fbded6bb722a48475c3190bca28e61b',
+                'onBlock': 1937093,
                 'etherscanLinkPrefix': 'https://ropsten.etherscan.io/'
             },
             '4': {
                 'network': 'Rinkeby',
-                'address': '0xd5df7d4c3559ffe43f4a76b465d0632750abee91',
-                'onBlock': 1107555,
+                // 'address': '0xd5df7d4c3559ffe43f4a76b465d0632750abee91',
+                'address': '',
+                'onBlock': 0,
                 'etherscanLinkPrefix': 'https://rinkeby.etherscan.io/'
             }
         };
