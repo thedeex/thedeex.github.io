@@ -16,6 +16,7 @@ pragma solidity ^0.4.15;
 *  5) every function except constructor should trigger at leas one event.
 *  6) smart contracts have to be audited and reviewed, comment your code.
 *
+*  Code is published on https://github.com/thedeex/thedeex.github.io
 */
 
 
@@ -39,6 +40,8 @@ contract tokenRecipient {
 
 contract DEEX {
 
+    // ver. 2.0
+
     /* ---------- Variables */
 
     /* --- ERC-20 variables */
@@ -58,7 +61,7 @@ contract DEEX {
     // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md#totalsupply
     // function totalSupply() constant returns (uint256 totalSupply)
     // we start with zero and will create tokens as SC receives ETH
-    uint256 public totalSupply = 0;
+    uint256 public totalSupply;
 
     // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md#balanceof
     // function balanceOf(address _owner) constant returns (uint256 balance)
@@ -70,22 +73,59 @@ contract DEEX {
 
     /* ----- For tokens sale */
 
+    uint256 private salesCounter = 0;
+
+    uint256 private maxSalesAllowed;
+
+    bool private transfersBetweenSalesAllowed;
+
+
     // initial value should be changed by the owner
     uint256 public tokenPriceInWei = 0;
 
-    uint256 public preIcoStartUnixTime = 0; // block.timestamp
-    uint256 public preIcoEndUnixTime = 0;  // block.timestamp
+    uint256 public saleStartUnixTime = 0; // block.timestamp
+    uint256 public saleEndUnixTime = 0;  // block.timestamp
 
     /* --- administrative */
     address public owner;
 
-    mapping (address => bool) public isManager; // holds managers
+    // account that can set prices
+    address private priceSetter;
+
+    // accounts holding tokens for for the team, for advisers and for the bounty campaign
+    mapping (address => bool) private isPreferredTokensAccount;
+
 
     /* ---------- Constructor */
     // do not forget about:
     // https://medium.com/@codetractio/a-look-into-paritys-multisig-wallet-bug-affecting-100-million-in-ether-and-tokens-356f5ba6e90a
     function DEEX() {
         owner = msg.sender;
+        priceSetter = msg.sender;
+        //
+        totalSupply = 100000000;
+        // tokens for sale go SC own account
+        balanceOf[this] = 75000000;
+        // for the team
+        // 0x31F5870C32789Ce58A5e7ABdbEd8caa6224cd1D3 -------- in production!
+        address team = msg.sender;
+        balanceOf[team] = 15000000;
+        isPreferredTokensAccount[team];
+        // for advisers
+        // 0xBfeBd4280432604bA5f35a9862Cb127A9F2Bde93 -------- in production!
+        address advisers = msg.sender;
+        balanceOf[advisers] = 7000000;
+        isPreferredTokensAccount[advisers];
+        // for the bounty campaign
+        // 0x44a2F1ae7E7b2D71Dd9D6F06cF057DB75a2971d8 -------- in production!
+        address bounty = msg.sender;
+        balanceOf[bounty] = 3000000;
+        isPreferredTokensAccount[bounty];
+        // for testNet can be more than 2
+        // maxSalesAllowed = 2;
+        maxSalesAllowed = 10;
+        //
+        transfersBetweenSalesAllowed = true;
     }
 
     /* ---------- Events */
@@ -106,15 +146,14 @@ contract DEEX {
 
     event PriceChanged(uint256 indexed newTokenPriceInWei);
 
-    event PreIcoTimeSet(uint256 startUnixTime, uint256 endUnixTime);
+    event SaleStarted(uint256 startUnixTime, uint256 endUnixTime, uint256 indexed saleNumber);
 
     event NewTokensSold(uint256 numberOfTokens, address indexed purchasedBy, uint256 indexed priceInWei);
 
-    event Withdrawal(address to, uint sumInWei);
+    event Withdrawal(address indexed to, uint sumInWei);
 
     /* --- Interaction with other contracts events  */
-    event DataSentToAnotherContract(address _from, address _toContract, bytes _extraData);
-
+    event DataSentToAnotherContract(address indexed _from, address indexed _toContract, bytes _extraData);
 
     /* ---------- Functions */
 
@@ -125,7 +164,7 @@ contract DEEX {
         _;
     }
 
-    /* --- ERC-20 Functons */
+    /* --- ERC-20 Functions */
     // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md#methods
 
     // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md#transfer
@@ -136,8 +175,13 @@ contract DEEX {
     // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md#transferfrom
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success){
 
-        // transfers are possible only after preICO is finished:
-        require(preIcoIsFinished());
+        // transfers are possible only after sale is finished
+        // exept for manager and preferred accounts
+        require(saleIsFinished() || msg.sender == owner || isPreferredTokensAccount[msg.sender]);
+
+        // transfers can be forbidden unitl final ICO is finished
+        // exept for manager and preferred accounts
+        require(transfersBetweenSalesAllowed || salesCounter == maxSalesAllowed || msg.sender == owner || isPreferredTokensAccount[msg.sender]);
 
         // Transfers of 0 values MUST be treated as normal transfers and fire the Transfer event (ERC-20)
         require(_value >= 0);
@@ -208,7 +252,10 @@ contract DEEX {
             return true;
         }
         else return false;
+    }
 
+    function approveAllAndCall(address _spender, bytes _extraData) public returns (bool success) {
+        return approveAndCall(_spender, balanceOf[msg.sender], _extraData);
     }
 
     /* https://github.com/ethereum/EIPs/issues/677
@@ -229,7 +276,11 @@ contract DEEX {
             return true;
         }
         else return false;
+    }
 
+    // for example for conveting ALL tokens of user account to another tokens
+    function transferAllAndCall(address _to, bytes _extraData) public returns (bool success){
+        return transferAndCall(_to, balanceOf[msg.sender], _extraData);
     }
 
     /* --- Administrative functions */
@@ -245,7 +296,6 @@ contract DEEX {
 
         return true;
     }
-
 
     /* ---------- Create and sell tokens  */
 
@@ -263,47 +313,61 @@ contract DEEX {
     * http://solidity.readthedocs.io/en/v0.4.15/frequently-asked-questions.html#are-timestamps-now-block-timestamp-reliable
     */
 
-    function setPreIcoTime(uint256 _startUnixTime, uint256 _endUnixTime) public onlyBy(owner) returns (bool success){
+    function startSale(uint256 _startUnixTime, uint256 _endUnixTime) public onlyBy(owner) returns (bool success){
 
-        // (!!!) time for ICO can be set only only once
-        require(preIcoStartUnixTime == 0 && preIcoEndUnixTime == 0);
+        require(balanceOf[this] >= 0);
+        require(salesCounter < maxSalesAllowed);
+
+        // time for sale can be set only if:
+        // this is first sale (saleStartUnixTime == 0 && saleEndUnixTime == 0) , or:
+        // previous sale finished ( saleIsFinished() )
+        require(
+        (saleStartUnixTime == 0 && saleEndUnixTime == 0) || saleIsFinished()
+        );
         // time can be set only for future
         require(_startUnixTime > now && _endUnixTime > now);
         // end time should be later than start time
         require(_endUnixTime - _startUnixTime > 0);
 
-        preIcoStartUnixTime = _startUnixTime;
-        preIcoEndUnixTime = _endUnixTime;
+        saleStartUnixTime = _startUnixTime;
+        saleEndUnixTime = _endUnixTime;
+        salesCounter = salesCounter + 1;
 
-        PreIcoTimeSet(_startUnixTime, _endUnixTime);
+        SaleStarted(_startUnixTime, _endUnixTime, salesCounter);
 
         return true;
     }
 
-    function preIcoIsRunning() private constant returns (bool){
-        // preICO time should be set (not 0)
-        require(preIcoStartUnixTime > 0 && preIcoEndUnixTime > 0);
-        // preICO shoud be started and not finished
-        require(now > preIcoStartUnixTime && now < preIcoEndUnixTime);
+    function saleIsRunning() private constant returns (bool){
+        // sale time should be set (not 0)
+        require(saleStartUnixTime > 0 && saleEndUnixTime > 0);
+        // sale shoud be started and not finished
+        require(now > saleStartUnixTime && now < saleEndUnixTime);
         return true;
     }
 
-    function preIcoIsFinished() private constant returns (bool){
-        // preICO time should be set (not 0)
-        require(preIcoStartUnixTime > 0 && preIcoEndUnixTime > 0);
-        // preICO shoud be finished
-        require(now > preIcoEndUnixTime);
+    function saleIsFinished() private constant returns (bool){
+        // sale time should be set (not 0)
+        require(saleStartUnixTime > 0 && saleEndUnixTime > 0);
+        // sale should be finished
+        require(now > saleEndUnixTime);
         return true;
     }
 
-    function setTokenPriceInWei(uint256 _priceInWei) public onlyBy(owner) returns (bool success){
+    function changePriceSetter(address _priceSetter) onlyBy(owner) returns (bool success) {
+        priceSetter = _priceSetter;
+        return true;
+    }
+
+
+    function setTokenPriceInWei(uint256 _priceInWei) public onlyBy(priceSetter) returns (bool success){
         require(_priceInWei >= 0);
         tokenPriceInWei = _priceInWei;
         PriceChanged(tokenPriceInWei);
         return true;
     }
 
-    // allows sending ether and receiveing tokens just using contract address
+    // allows sending ether and receiving tokens just using contract address
     // warning:
     // 'If the fallback function requires more than 2300 gas, the contract cannot receive Ether'
     // see:
@@ -315,28 +379,38 @@ contract DEEX {
     //
     function buyTokens() public payable returns (bool success){
 
-        if (preIcoIsRunning() && tokenPriceInWei > 0) {
+        if (saleIsRunning() && tokenPriceInWei > 0) {
 
             uint256 numberOfTokens = msg.value / tokenPriceInWei;
-            totalSupply = totalSupply + numberOfTokens;
-            balanceOf[msg.sender] = balanceOf[msg.sender] + numberOfTokens;
 
-            NewTokensSold(numberOfTokens, msg.sender, tokenPriceInWei);
+            if (numberOfTokens <= balanceOf[this]) {
 
-            return true;
+                balanceOf[msg.sender] = balanceOf[msg.sender] + numberOfTokens;
+                balanceOf[this] = balanceOf[this] - numberOfTokens;
+
+                NewTokensSold(numberOfTokens, msg.sender, tokenPriceInWei);
+
+                return true;
+            }
+            else {
+                // (payable)
+                revert();
+            }
         }
-        // (payable)
-        else revert();
+        else {
+            // (payable)
+            revert();
+        }
     }
 
-    /*  After preICO contract owner
+    /*  After sale contract owner
     *  (can be another contract or account)
     *  can withdraw all collected Ether
     */
     function withdrawAllToOwner() public onlyBy(owner) returns (bool) {
 
-        // only after preICO is finished:
-        require(preIcoIsFinished());
+        // only after sale is finished:
+        require(saleIsFinished());
         uint256 sumInWei = this.balance;
 
         if (
@@ -359,16 +433,25 @@ contract DEEX {
     // ! referrers can not be removed !
     mapping (bytes32 => bool) private isReferrer;
 
-    uint256 private referralBonus;
+    uint256 private referralBonus = 0;
 
-    uint256 private referrerBonus;
+    uint256 private referrerBonus = 0;
+    // tokens owned by referrers:
+    mapping (bytes32 => uint256) public referrerBalanceOf;
+
+    mapping (bytes32 => uint) public referrerLinkedSales;
 
     function addReferrer(bytes32 _referrer) public onlyBy(owner) returns (bool success){
         isReferrer[_referrer] = true;
         return true;
     }
 
-    // bonuses are set in as integers (20%, 30%)
+    function removeReferrer(bytes32 _referrer) public onlyBy(owner) returns (bool success){
+        isReferrer[_referrer] = false;
+        return true;
+    }
+
+    // bonuses are set in as integers (20%, 30%), initial 0%
     function setReferralBonuses(uint256 _referralBonus, uint256 _referrerBonus) public onlyBy(owner) returns (bool success){
         require(_referralBonus > 0 && _referrerBonus > 0);
         referralBonus = _referralBonus;
@@ -376,42 +459,53 @@ contract DEEX {
         return true;
     }
 
-    // tokens owned by referrers:
-    mapping (bytes32 => uint256) public referrerBalanceOf;
-
     function buyTokensWithReferrerAddress(address _referrer) public payable returns (bool success){
 
         bytes32 referrer = keccak256(_referrer);
 
-        if (
-        preIcoIsRunning()
-        && tokenPriceInWei > 0
-        && isReferrer[referrer]
-        ) {
+        if (saleIsRunning() && tokenPriceInWei > 0) {
 
-            uint256 numberOfTokens = msg.value / tokenPriceInWei;
+            if (isReferrer[referrer]) {
 
-            uint256 referralBonusTokens = (numberOfTokens * (100 + referralBonus) / 100) - numberOfTokens;
-            uint256 referrerBonusTokens = (numberOfTokens * (100 + referrerBonus) / 100) - numberOfTokens;
+                uint256 numberOfTokens = msg.value / tokenPriceInWei;
 
-            totalSupply = totalSupply + numberOfTokens + referralBonusTokens + referrerBonusTokens;
+                if (numberOfTokens <= balanceOf[this]) {
 
-            balanceOf[msg.sender] = balanceOf[msg.sender] + (numberOfTokens + referralBonusTokens);
+                    referrerLinkedSales[referrer] = referrerLinkedSales[referrer] + numberOfTokens;
 
-            referrerBalanceOf[referrer] = referrerBalanceOf[referrer] + referrerBonusTokens;
+                    uint256 referralBonusTokens = (numberOfTokens * (100 + referralBonus) / 100) - numberOfTokens;
+                    uint256 referrerBonusTokens = (numberOfTokens * (100 + referrerBonus) / 100) - numberOfTokens;
 
-            NewTokensSold(numberOfTokens + referralBonusTokens, msg.sender, tokenPriceInWei);
+                    balanceOf[this] = balanceOf[this] - numberOfTokens - referralBonusTokens - referrerBonusTokens;
 
-            return true;
+                    balanceOf[msg.sender] = balanceOf[msg.sender] + (numberOfTokens + referralBonusTokens);
+
+                    referrerBalanceOf[referrer] = referrerBalanceOf[referrer] + referrerBonusTokens;
+
+                    NewTokensSold(numberOfTokens + referralBonusTokens, msg.sender, tokenPriceInWei);
+
+                    return true;
+                }
+                else {
+                    // (payable)
+                    revert();
+                }
+            }
+            else {
+                // (payable)
+                buyTokens();
+            }
         }
-        // (payable)
-        else revert();
+        else {
+            // (payable)
+            revert();
+        }
     }
 
     event ReferrerBonusTokensTaken(address referrer, uint256 bonusTokensValue);
 
     function getReferrerBonusTokens() public returns (bool success){
-        require(preIcoIsFinished());
+        require(saleIsFinished());
         uint256 bonusTokens = referrerBalanceOf[keccak256(msg.sender)];
         balanceOf[msg.sender] = balanceOf[msg.sender] + bonusTokens;
         ReferrerBonusTokensTaken(msg.sender, bonusTokens);
