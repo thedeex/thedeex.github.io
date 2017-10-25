@@ -25,6 +25,7 @@ $(document).ready(function () {
 /* ================== AngularJS ======= */
 
 var app = angular.module("deex", [
+    'ngCookies', // (1.6.6) https://code.angularjs.org/1.6.6/docs/api/ngCookies
     // 'ngRoute',
     'ui.router',
     'ngProgress', // https://github.com/VictorBjelkholm/ngProgress
@@ -65,7 +66,11 @@ app.config(function ($stateProvider, // from ui.router replaces AngularJS native
     // )
         .state('tokens', {
                 // url: '/tokens',
-                url: '/',
+                // url: '/',
+                // use as var referrer = $stateParams.referrer;
+                // should be eth address, like: 0x6ae8e8c1accaa38d05f30eb107b99af89e3fd349
+                //
+                url: '/{referrer}',
                 controller: 'tokens',
                 templateUrl: 'views/tokens.html'
             }

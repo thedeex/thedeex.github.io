@@ -3,6 +3,29 @@
 
         <div class="row">
             <div class="col-lg-12">
+                <span ng-click="refreshEthUsd()" title="Click to refresh">ETH/USD: {{ethusd}} || ETH/BTC: {{ethbtc}} (data from etherscan.io)</span>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg-12">
+                <span>Sale Start: &nbsp {{saleStartDate.toLocaleString()}}</span>
+                <br>
+                <span>Sale End: &nbsp {{saleEndDate.toLocaleString()}}</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <span ng-click="getTokenPriceInWei()" title="Click to refresh"> Current <span
+                        style="color: red">deex</span> token price: &nbsp
+                    <a href="" style="font-weight: bolder">{{web3.fromWei(tokenPriceInWei,'ether')}} ETH</a>
+                </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
                 <div id="smart-contract-address">
                     <br>
                     Smart contract address:
@@ -15,14 +38,14 @@
         </div>
 
         <div ng-click="refreshBalances()" title="Click to refresh">
-            ETH deposited in contract (click to refresh):
+            ETH raised (click to refresh): &nbsp
             <a href="">
                 {{etherBalanceOfContract}}
             </a>
         </div>
 
         <div ng-click="getTotalSupply()" title="Click to refresh">
-            Total tokens issued in this project (click to refresh):
+            Total tokens issued in this project: &nbsp
             <a href="">
                 {{totalSupply}}
             </a>

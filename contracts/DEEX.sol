@@ -79,7 +79,6 @@ contract DEEX {
 
     bool private transfersBetweenSalesAllowed;
 
-
     // initial value should be changed by the owner
     uint256 public tokenPriceInWei = 0;
 
@@ -90,7 +89,12 @@ contract DEEX {
     address public owner;
 
     // account that can set prices
-    address private priceSetter;
+    address public priceSetter;
+
+    // 0 - not set
+    uint256 private priceMaxWei = 0;
+    // 0 - not set
+    uint256 private priceMinWei = 0;
 
     // accounts holding tokens for for the team, for advisers and for the bounty campaign
     mapping (address => bool) private isPreferredTokensAccount;
@@ -315,7 +319,7 @@ contract DEEX {
 
     function startSale(uint256 _startUnixTime, uint256 _endUnixTime) public onlyBy(owner) returns (bool success){
 
-        require(balanceOf[this] >= 0);
+        require(balanceOf[this] > 0);
         require(salesCounter < maxSalesAllowed);
 
         // time for sale can be set only if:
@@ -339,31 +343,60 @@ contract DEEX {
     }
 
     function saleIsRunning() private constant returns (bool){
+        // if all sold - sale is finished:
+        require(balanceOf[this] > 0);
         // sale time should be set (not 0)
         require(saleStartUnixTime > 0 && saleEndUnixTime > 0);
         // sale shoud be started and not finished
         require(now > saleStartUnixTime && now < saleEndUnixTime);
+
         return true;
     }
 
     function saleIsFinished() private constant returns (bool){
-        // sale time should be set (not 0)
-        require(saleStartUnixTime > 0 && saleEndUnixTime > 0);
-        // sale should be finished
-        require(now > saleEndUnixTime);
+
+        if (balanceOf[this] == 0) {
+            return true;
+        }
+        else {
+            // sale time should be set (not 0)
+            require(saleStartUnixTime > 0 && saleEndUnixTime > 0);
+            // sale should be finished
+            require(now > saleEndUnixTime);
+            return true;
+        }
+    }
+
+    function changePriceSetter(address _priceSetter) public onlyBy(owner) returns (bool success) {
+        priceSetter = _priceSetter;
         return true;
     }
 
-    function changePriceSetter(address _priceSetter) onlyBy(owner) returns (bool success) {
-        priceSetter = _priceSetter;
+    function setMinMaxPriceInWei(uint256 _priceMinWei, uint256 _priceMaxWei) public onlyBy(owner) returns (bool success){
+        require(_priceMinWei >= 0 && _priceMaxWei >= 0);
+        priceMinWei = _priceMinWei;
+        priceMaxWei = _priceMaxWei;
         return true;
     }
 
 
     function setTokenPriceInWei(uint256 _priceInWei) public onlyBy(priceSetter) returns (bool success){
+
         require(_priceInWei >= 0);
-        tokenPriceInWei = _priceInWei;
+
+        // if 0 - not set
+        if (priceMinWei != 0 && _priceInWei < priceMinWei) {
+            tokenPriceInWei = priceMinWei;
+        }
+        else if (priceMaxWei != 0 && _priceInWei > priceMaxWei) {
+            tokenPriceInWei = priceMaxWei;
+        }
+        else {
+            tokenPriceInWei = _priceInWei;
+        }
+
         PriceChanged(tokenPriceInWei);
+
         return true;
     }
 
