@@ -183,11 +183,11 @@ contract DEEX {
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success){
 
         // transfers are possible only after sale is finished
-        // exept for manager and preferred accounts
+        // except for manager and preferred accounts
         require(saleIsFinished() || msg.sender == owner || isPreferredTokensAccount[msg.sender]);
 
-        // transfers can be forbidden unitl final ICO is finished
-        // exept for manager and preferred accounts
+        // transfers can be forbidden until final ICO is finished
+        // except for manager and preferred accounts
         require(transfersBetweenSalesAllowed || salesCounter == maxSalesAllowed || msg.sender == owner || isPreferredTokensAccount[msg.sender]);
 
         // Transfers of 0 values MUST be treated as normal transfers and fire the Transfer event (ERC-20)
