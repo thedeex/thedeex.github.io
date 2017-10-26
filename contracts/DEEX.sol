@@ -99,40 +99,47 @@ contract DEEX {
     // accounts holding tokens for for the team, for advisers and for the bounty campaign
     mapping (address => bool) public isPreferredTokensAccount;
 
+    bool public contractInitialized = false;
+
 
     /* ---------- Constructor */
     // do not forget about:
     // https://medium.com/@codetractio/a-look-into-paritys-multisig-wallet-bug-affecting-100-million-in-ether-and-tokens-356f5ba6e90a
     function DEEX() {
-
         owner = msg.sender;
 
-        priceSetter = msg.sender;
-
-        totalSupply = 100000000;
-        // tokens for sale go SC own account
-        balanceOf[this] = 75000000;
-
-        // for the team
-        // 0x31F5870C32789Ce58A5e7ABdbEd8caa6224cd1D3 --------------------------------------------change  in production!
-        address team = 0xa8164f90a8d0f0b80b406e4761bd0e1445692007;
-        balanceOf[team] = 15000000;
-        isPreferredTokensAccount[team] = true;
-        // for advisers
-        // 0xBfeBd4280432604bA5f35a9862Cb127A9F2Bde93 --------------------------------------------change  in production!
-        address advisers = 0x0c06986698dabb825d74a2afc05cedd0e451fa09;
-        balanceOf[advisers] = 7000000;
-        isPreferredTokensAccount[advisers] = true;
-        // for the bounty campaign
-        // 0x44a2F1ae7E7b2D71Dd9D6F06cF057DB75a2971d8 --------------------------------------------change  in production!
-        address bounty = 0x189165bf07743727a1ff28c36e04cf6c1354c8f8;
-        balanceOf[bounty] = 3000000;
-        isPreferredTokensAccount[bounty] = true;
         // for testNet can be more than 2
         // --------------------------------2------------------------------------------------------change  in production!
         maxSalesAllowed = 10;
         //
         transfersBetweenSalesAllowed = true;
+    }
+
+
+    function initContract(address team, address advisers, address bounty) public onlyBy(owner) returns (bool){
+
+        require(contractInitialized == false);
+        contractInitialized = true;
+
+        priceSetter = msg.sender;
+
+        totalSupply = 100000000;
+
+        // tokens for sale go SC own account
+        balanceOf[this] = 75000000;
+
+        // for the team
+        balanceOf[team] = balanceOf[team] + 15000000;
+        isPreferredTokensAccount[team] = true;
+
+        // for advisers
+        balanceOf[advisers] = balanceOf[advisers] + 7000000;
+        isPreferredTokensAccount[advisers] = true;
+
+        // for the bounty campaign
+        balanceOf[bounty] = balanceOf[bounty] + 3000000;
+        isPreferredTokensAccount[bounty] = true;
+
     }
 
     /* ---------- Events */
@@ -175,16 +182,18 @@ contract DEEX {
     // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md#methods
 
     // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md#transfer
-    function transfer(address _to, uint256 _value) public returns (bool success){
+    function transfer(address _to, uint256 _value) public returns (bool){
         return transferFrom(msg.sender, _to, _value);
     }
 
     // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md#transferfrom
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success){
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool){
 
         // transfers are possible only after sale is finished
         // except for manager and preferred accounts
-        require(saleIsFinished() || msg.sender == owner || isPreferredTokensAccount[msg.sender]);
+
+        bool saleFinished = saleIsFinished();
+        require(saleFinished || msg.sender == owner || isPreferredTokensAccount[msg.sender]);
 
         // transfers can be forbidden until final ICO is finished
         // except for manager and preferred accounts
@@ -212,6 +221,7 @@ contract DEEX {
 
         // event
         Transfer(_from, _to, _value);
+
         return true;
     }
 
@@ -346,14 +356,20 @@ contract DEEX {
     }
 
     function saleIsRunning() public constant returns (bool){
-        // if all sold - sale is finished:
-        require(balanceOf[this] > 0);
-        // sale time should be set (not 0)
-        require(saleStartUnixTime > 0 && saleEndUnixTime > 0);
-        // sale shoud be started and not finished
-        require(now > saleStartUnixTime && now < saleEndUnixTime);
 
-        return true;
+        if (balanceOf[this] == 0) {
+            return false;
+        }
+
+        if (saleStartUnixTime == 0 && saleEndUnixTime == 0) {
+            return false;
+        }
+
+        if (now > saleStartUnixTime && now < saleEndUnixTime) {
+            return true;
+        }
+
+        return false;
     }
 
     function saleIsFinished() public constant returns (bool){
@@ -361,13 +377,16 @@ contract DEEX {
         if (balanceOf[this] == 0) {
             return true;
         }
-        else {
-            // sale time should be set (not 0)
-            require(saleStartUnixTime > 0 && saleEndUnixTime > 0);
-            // sale should be finished
-            require(now > saleEndUnixTime);
+
+        else if (
+        (saleStartUnixTime > 0 && saleEndUnixTime > 0)
+        && now > saleEndUnixTime) {
+
             return true;
         }
+
+        // <<<
+        return false;
     }
 
     function changePriceSetter(address _priceSetter) public onlyBy(owner) returns (bool success) {
