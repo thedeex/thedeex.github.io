@@ -110,7 +110,7 @@ contract DEEX {
 
         // for testNet can be more than 2
         // --------------------------------2------------------------------------------------------change  in production!
-        maxSalesAllowed = 10;
+        maxSalesAllowed = 2;
         //
         transfersBetweenSalesAllowed = true;
     }
