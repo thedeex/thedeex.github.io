@@ -73,9 +73,9 @@ contract DEEX {
 
     /* ----- For tokens sale */
 
-    uint256 private salesCounter = 0;
+    uint256 public salesCounter = 0;
 
-    uint256 private maxSalesAllowed;
+    uint256 public maxSalesAllowed;
 
     bool private transfersBetweenSalesAllowed;
 
@@ -97,7 +97,7 @@ contract DEEX {
     uint256 private priceMinWei = 0;
 
     // accounts holding tokens for for the team, for advisers and for the bounty campaign
-    mapping (address => bool) private isPreferredTokensAccount;
+    mapping (address => bool) public isPreferredTokensAccount;
 
 
     /* ---------- Constructor */
@@ -117,17 +117,17 @@ contract DEEX {
         // 0x31F5870C32789Ce58A5e7ABdbEd8caa6224cd1D3 --------------------------------------------change  in production!
         address team = 0xa8164f90a8d0f0b80b406e4761bd0e1445692007;
         balanceOf[team] = 15000000;
-        isPreferredTokensAccount[team];
+        isPreferredTokensAccount[team] = true;
         // for advisers
         // 0xBfeBd4280432604bA5f35a9862Cb127A9F2Bde93 --------------------------------------------change  in production!
         address advisers = 0x0c06986698dabb825d74a2afc05cedd0e451fa09;
         balanceOf[advisers] = 7000000;
-        isPreferredTokensAccount[advisers];
+        isPreferredTokensAccount[advisers] = true;
         // for the bounty campaign
         // 0x44a2F1ae7E7b2D71Dd9D6F06cF057DB75a2971d8 --------------------------------------------change  in production!
         address bounty = 0x189165bf07743727a1ff28c36e04cf6c1354c8f8;
         balanceOf[bounty] = 3000000;
-        isPreferredTokensAccount[bounty];
+        isPreferredTokensAccount[bounty] = true;
         // for testNet can be more than 2
         // --------------------------------2------------------------------------------------------change  in production!
         maxSalesAllowed = 10;
