@@ -1,0 +1,129 @@
+<!--
+use this id to access $scope in browser console:
+angular.element(document.getElementById('tokensCtrl')).scope();
+-->
+
+<div id="adminCtrl">
+    <br>
+    <div class="container error-message" ng-hide="currentNetwork.connected">
+        <div class="row">
+            <div class="col-lg-12">
+                <center>
+                    <!--<md ng-include="'/views/noEthereumNodeConnectionMessage.md'"></md>-->
+                    You are not connected to Ethereum network. Please use <a
+                        ng-href="https://github.com/ethereum/mist/releases">Mist browser</a>
+                    or Google Chrome with <a ng-href="https://metamask.io">MetaMask</a> plugin &nbsp<a ui-sref="manual">[help]</a>
+                    <br>
+                </center>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container greyTransparentBackground whiteTextRegular">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <center>
+                    <br>
+                    <img src="images/deex.logo.big.png" alt="" width="25%" height="25%">
+                    <br>
+                    <hr>
+                </center>
+            </div>
+        </div>
+
+        <!-- ================== Functions ================= -->
+
+        <div class="row" ng-hide="noAccountsDetected">
+
+            <div class="col-xs-6">
+
+                <div id="startSale">
+
+                    <h4><strong>startSale</strong></h4>
+
+                    <!--
+                    $scope._startUnixTime
+                    $scope._endUnixTime
+                    -->
+
+                    <form class="form-inline">
+                        <div class="form-group">
+
+                            <div class="input-group">
+                                Start (Unix Time): <br>
+                                <!-- see: http://stackoverflow.com/questions/26293769/how-to-parseint-in-angular-js -->
+                                <!--<input type="number" ng-model="sumWei" class="form-control" name="sumWei" size="50">-->
+                                <!-- https://stackoverflow.com/questions/19011861/is-there-a-float-input-type-in-html5 -->
+                                <input type="number" step="1" min=0 ng-model="_startUnixTime"
+                                       class="form-control"
+                                       name="_startUnixTime"
+                                       size="50"> ( Time:
+                                {{unixTimeToDateString(_startUnixTime)}}
+                                )
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="input-group">
+                            End (Unix Time): <br>
+                            <!-- see: http://stackoverflow.com/questions/26293769/how-to-parseint-in-angular-js -->
+                            <!--<input type="number" ng-model="sumWei" class="form-control" name="sumWei" size="50">-->
+                            <!-- https://stackoverflow.com/questions/19011861/is-there-a-float-input-type-in-html5 -->
+                            <input type="number" step="1" min=0 ng-model="_endUnixTime" class="form-control"
+                                   name="_endUnixTime"
+                                   size="50"> ( Time:
+                            {{unixTimeToDateString(_endUnixTime)}}
+                            )
+                        </div>
+
+                        <br>
+                        <button ng-click="startSale()"
+                                ng-class="{disabled: buyTokensTxInProgress}"
+                                class="btn btn-danger">
+                            Start sale!
+                        </button>
+                        <span ng-show="buyTokensTxInProgress" title="loading...">
+                            <i class="fa fa-refresh fa-spin fa-fw"></i>
+                        </span>
+                    </form>
+
+                    <br>
+                    <div class="alert alert-success alert-dismissible" role="alert" ng-show="buyTokensSuccess">
+                        <!--<button type="button" class="close" data-dismiss="alert">-->
+                        <button type="button" class="close">
+                            <span ng-click="buyTokensSuccess=null">&times;</span>
+                        </button>
+                        {{buyTokensSuccess}}<br>
+                        <a ng-href="{{contractDeployed[currentNetwork.network_id].etherscanLinkPrefix}}/tx/{{buyTokensSuccessTx}}"
+                           target="_blank">
+                            transaction data
+                        </a>
+                    </div>
+
+                    <!--<div class="alert alert-danger alert-dismissible" role="alert" ng-show="buyTokensError">-->
+                    <div class="alert alert-danger" role="alert" ng-show="buyTokensError">
+                        <br>
+                        <!--https://stackoverflow.com/questions/20494887/my-bootstrap-alert-will-not-display-after-being-closed  -->
+                        <!-- https://stackoverflow.com/a/29820181 -->
+                        <!--<button type="button" class="close" data-dismiss="alert">-->
+                        <button type="button" class="close">
+                            <span ng-click="buyTokensError=null">&times;</span>
+                        </button>
+                        {{buyTokensError}}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <footer></footer>
+    <br>
+
+</div>

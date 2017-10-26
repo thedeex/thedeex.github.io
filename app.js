@@ -75,6 +75,17 @@ app.config(function ($stateProvider, // from ui.router replaces AngularJS native
                 templateUrl: 'views/tokens.html'
             }
         )
+        .state('admin', {
+                // url: '/tokens',
+                // url: '/',
+                // use as var referrer = $stateParams.referrer;
+                // should be eth address, like: 0x6ae8e8c1accaa38d05f30eb107b99af89e3fd349
+                //
+                url: '/admin',
+                controller: 'admin',
+                templateUrl: 'views/admin.html'
+            }
+        )
         .state('manual', {
                 // url: '/tokens',
                 // url: '/',
@@ -86,6 +97,7 @@ app.config(function ($stateProvider, // from ui.router replaces AngularJS native
                 templateUrl: 'views/manual.html'
             }
         );
+
 
     // see:
     // http://stackoverflow.com/a/41273403/1697878
