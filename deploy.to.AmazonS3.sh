@@ -15,3 +15,5 @@ aws s3 sync . s3://aws-website-deexdapp-6ovtc/ --delete
 # https://d1cmo8x25rg26g.cloudfront.net
 # also available via:
 # http://aws-website-deexdapp-6ovtc.s3-website-us-east-1.amazonaws.com (no SSL)
+
+echo 'https://d1cmo8x25rg26g.cloudfront.net'
