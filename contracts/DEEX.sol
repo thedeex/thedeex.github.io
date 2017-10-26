@@ -126,7 +126,7 @@ contract DEEX {
         balanceOf[bounty] = 3000000;
         isPreferredTokensAccount[bounty];
         // for testNet can be more than 2
-        // maxSalesAllowed = 2;
+        // --------------------------------2------------------- in production!
         maxSalesAllowed = 10;
         //
         transfersBetweenSalesAllowed = true;
