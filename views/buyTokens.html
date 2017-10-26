@@ -33,7 +33,7 @@
                             <!-- see: http://stackoverflow.com/questions/26293769/how-to-parseint-in-angular-js -->
                             <!--<input type="number" ng-model="sumWei" class="form-control" name="sumWei" size="50">-->
                             <!-- https://stackoverflow.com/questions/19011861/is-there-a-float-input-type-in-html5 -->
-                            <input type="number" step="0.0001" min=0 ng-model="sumEth" class="form-control"
+                            <input type="number" step="0.01" min=0 ng-model="sumEth" class="form-control"
                                    name="sumEth"
                                    size="50"> ( Tokens:
                             {{(sumEth*1000000000000000000/tokenPriceInWei)-((sumEth*1000000000000000000/tokenPriceInWei)%1)}}

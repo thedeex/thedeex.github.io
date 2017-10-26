@@ -109,7 +109,7 @@ app.controller('tokens', [
         };
 
         /* ---- init sum ETH in the form:  */
-        $scope.sumEth = 0.0001;
+        $scope.sumEth = 0.1;
 
         /* ---- check web3 connections and build functions: */
 
