@@ -104,29 +104,32 @@ contract DEEX {
     // do not forget about:
     // https://medium.com/@codetractio/a-look-into-paritys-multisig-wallet-bug-affecting-100-million-in-ether-and-tokens-356f5ba6e90a
     function DEEX() {
+
         owner = msg.sender;
+
         priceSetter = msg.sender;
-        //
+
         totalSupply = 100000000;
         // tokens for sale go SC own account
         balanceOf[this] = 75000000;
+
         // for the team
-        // 0x31F5870C32789Ce58A5e7ABdbEd8caa6224cd1D3 -------- in production!
-        address team = msg.sender;
+        // 0x31F5870C32789Ce58A5e7ABdbEd8caa6224cd1D3 --------------------------------------------change  in production!
+        address team = 0xa8164f90a8d0f0b80b406e4761bd0e1445692007;
         balanceOf[team] = 15000000;
         isPreferredTokensAccount[team];
         // for advisers
-        // 0xBfeBd4280432604bA5f35a9862Cb127A9F2Bde93 -------- in production!
-        address advisers = msg.sender;
+        // 0xBfeBd4280432604bA5f35a9862Cb127A9F2Bde93 --------------------------------------------change  in production!
+        address advisers = 0x0c06986698dabb825d74a2afc05cedd0e451fa09;
         balanceOf[advisers] = 7000000;
         isPreferredTokensAccount[advisers];
         // for the bounty campaign
-        // 0x44a2F1ae7E7b2D71Dd9D6F06cF057DB75a2971d8 -------- in production!
-        address bounty = msg.sender;
+        // 0x44a2F1ae7E7b2D71Dd9D6F06cF057DB75a2971d8 --------------------------------------------change  in production!
+        address bounty = 0x189165bf07743727a1ff28c36e04cf6c1354c8f8;
         balanceOf[bounty] = 3000000;
         isPreferredTokensAccount[bounty];
         // for testNet can be more than 2
-        // --------------------------------2------------------- in production!
+        // --------------------------------2------------------------------------------------------change  in production!
         maxSalesAllowed = 10;
         //
         transfersBetweenSalesAllowed = true;
@@ -342,7 +345,7 @@ contract DEEX {
         return true;
     }
 
-    function saleIsRunning() private constant returns (bool){
+    function saleIsRunning() public constant returns (bool){
         // if all sold - sale is finished:
         require(balanceOf[this] > 0);
         // sale time should be set (not 0)
@@ -353,7 +356,7 @@ contract DEEX {
         return true;
     }
 
-    function saleIsFinished() private constant returns (bool){
+    function saleIsFinished() public constant returns (bool){
 
         if (balanceOf[this] == 0) {
             return true;
