@@ -510,15 +510,13 @@ app.controller('tokens', [
                 }
             });
 
-
         } else {
 
-            $log.error('[tokens] web3 is not connected to Ethereum node');
+            $log.debug('[tokens] web3 is not connected to Ethereum node');
 
         }
 
-
-    } // end of function smartContractCtrl
+    } // end of function tokensCtrl
 
 ]);
 

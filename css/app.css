@@ -21,6 +21,11 @@ footer {
 
 .greyTransparentBackground {
     background: rgba(100, 100, 100, 0.6);
+
+}
+
+.greyTransparentBackgroundDark {
+    background: rgba(100, 100, 100, 0.6);
 }
 
 .whiteTextRegular {

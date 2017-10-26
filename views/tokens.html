@@ -9,9 +9,11 @@ angular.element(document.getElementById('tokensCtrl')).scope();
         <div class="row">
             <div class="col-lg-12">
                 <center>
-                    <!--<div class="card card-block">-->
-                    <md ng-include="'/views/noEthereumNodeConnectionMessage.md'"></md>
-                    <!--</div>-->
+                    <!--<md ng-include="'/views/noEthereumNodeConnectionMessage.md'"></md>-->
+                    You are not connected to Ethereum network. Please use <a
+                        ng-href="https://github.com/ethereum/mist/releases">Mist browser</a>
+                    or Google Chrome with <a ng-href="https://metamask.io">MetaMask</a> plugin &nbsp<a ui-sref="manual">[help]</a>
+                    <br>
                 </center>
             </div>
         </div>
