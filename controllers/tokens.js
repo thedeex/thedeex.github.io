@@ -167,8 +167,9 @@ app.controller('tokens', [
 
                                     /* ----- get data from contract: */
 
-                                    $scope.saleStartDate = {}; //
-                                    $scope.getSaleStartDate = function () {
+                                    // --- dates:
+                                    // TODO: make saleIsRunning() and saleIsFinished() in SC public
+                                    $scope.getSaleStartAndEndDates = function () {
                                         $scope.contract.saleStartUnixTime.call().then(
                                             function (saleStartUnixTime) {
                                                 console.log("saleStartUnixTime :", saleStartUnixTime);
@@ -176,6 +177,21 @@ app.controller('tokens', [
                                                 $scope.saleStartDate = new Date(saleStartUnixTime.toNumber() * 1000);
                                                 $scope.$apply(); //
                                                 $log.info('$scope.saleStartDate: ', $scope.saleStartDate);
+
+                                                $scope.contract.saleEndUnixTime.call().then(
+                                                    function (saleEndUnixTime) {
+                                                        $scope.saleEndDate = new Date(saleEndUnixTime.toNumber() * 1000);
+                                                        $scope.$apply(); //
+                                                        $log.info('$scope.saleEndDate: ', $scope.saleEndDate);
+
+                                                        $scope.saleIsRunning = $scope.saleStartDate < Date.now() < $scope.saleEndDate;
+                                                    }
+                                                ).catch(function (error) {
+                                                        $scope.alertDanger = error.toString();
+                                                        $log.error(error);
+                                                        $scope.$apply();
+                                                    }
+                                                );
                                             }
                                         ).catch(function (error) {
                                                 $scope.alertDanger = error.toString();
@@ -184,32 +200,7 @@ app.controller('tokens', [
                                             }
                                         );
                                     };
-                                    $scope.getSaleStartDate();
-
-
-                                    $scope.saleEndDate = {}; //
-                                    $scope.getSaleEndDate = function () {
-                                        $scope.contract.saleEndUnixTime.call().then(
-                                            function (saleEndUnixTime) {
-                                                $scope.saleEndDate = new Date(saleEndUnixTime.toNumber() * 1000);
-                                                $scope.$apply(); //
-                                                $log.info('$scope.saleEndDate: ', $scope.saleEndDate);
-                                            }
-                                        ).catch(function (error) {
-                                                $scope.alertDanger = error.toString();
-                                                $log.error(error);
-                                                $scope.$apply();
-                                            }
-                                        );
-                                    };
-                                    $scope.getSaleEndDate();
-
-                                    // TODO: make saleIsRunning() and saleIsFinished() in SC public
-                                    $scope.saleIsRunning = false; //
-                                    $scope.getSaleIsRunning = function () {
-                                        $scope.saleIsRunning = $scope.saleStartDate < Date.now() < $scope.saleEndDate;
-                                    };
-                                    $scope.getSaleIsRunning();
+                                    $scope.getSaleStartAndEndDates();
 
 
                                     $scope.balanceOf = {}; // to store acc balances in tokens
