@@ -307,10 +307,10 @@ app.controller('admin', [
 
                                     /* ---- withdrawAllToOwner() -- */
                                     $scope.withdrawAllToOwnerTxReceipt = null;
-                                    scope.withdrawAllToOwnerTxError = null;
+                                    $scope.withdrawAllToOwnerTxError = null;
                                     $scope.withdrawAllToOwner = function () {
 
-                                        console.log("$scope.withdrawAllToOwner() started");
+                                        $log.info("$scope.withdrawAllToOwner() started");
 
                                         var txParameters = {};
                                         txParameters.from = web3.eth.defaultAccount;
