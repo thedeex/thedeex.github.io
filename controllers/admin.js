@@ -303,7 +303,155 @@ app.controller('admin', [
                                         }
                                     };
 
-                                    /* ---------- START SALE: */
+                                    /* ------------ INIT */
+
+                                    /* ---- withdrawAllToOwner() -- */
+                                    $scope.withdrawAllToOwnerTxReceipt = null;
+                                    scope.withdrawAllToOwnerTxError = null;
+                                    $scope.withdrawAllToOwner = function () {
+
+                                        console.log("$scope.withdrawAllToOwner() started");
+
+                                        var txParameters = {};
+                                        txParameters.from = web3.eth.defaultAccount;
+                                        txParameters.gas = 4000000;
+                                        $scope.contract.withdrawAllToOwner()
+                                            .then(function (txReceipt) {
+                                                    // txReceiptSave(txReceipt);
+                                                    $scope.withdrawAllToOwnerTxReceipt = txReceipt;
+                                                    console.log(txReceipt);
+                                                    // $scope.transactions.push(txReceipt);
+                                                }
+                                            ).catch(function (error) {
+                                                $scope.withdrawAllToOwnerTxError = error;
+                                                console.log(error);
+                                            }
+                                        );
+                                    };
+
+                                    $scope.initContract = function () {
+
+                                        console.log("$scope.initContract started");
+
+                                        var team = "0x31F5870C32789Ce58A5e7ABdbEd8caa6224cd1D3";
+                                        var advisers = "0xBfeBd4280432604bA5f35a9862Cb127A9F2Bde93";
+                                        var bounty = "0x44a2F1ae7E7b2D71Dd9D6F06cF057DB75a2971d8";
+
+                                        var txParameters = {};
+                                        txParameters.from = web3.eth.defaultAccount;
+                                        txParameters.gas = 4000000;
+                                        $scope.contract.initContract(
+                                            team,       // address
+                                            advisers,   // address
+                                            bounty,     // address
+                                            txParameters
+                                        )
+                                            .then(function (txReceipt) {
+                                                    // txReceiptSave(txReceipt);
+                                                    console.log(txReceipt);
+                                                    // $scope.transactions.push(txReceipt);
+                                                }
+                                            ).catch(function (error) {
+                                                console.log(error);
+                                            }
+                                        );
+                                    };
+
+
+                                    $scope.setTokenPriceInWei = function () {
+                                        // function setTokenPriceInWei(uint256 _priceInWei) public onlyBy(priceSetter) returns (bool success){
+                                        $log.debug("$scope.setTokenPriceInWei", $scope.newTokenPriceInWei);
+
+                                        // var txParameters = {};
+                                        // txParameters.from = web3.eth.defaultAccount;
+                                        // txParameters.gas = 4000000;
+                                        $scope.contract.setTokenPriceInWei(
+                                            $scope.newTokenPriceInWei
+                                        )
+                                            .then(function (txReceipt) {
+                                                    console.log(txReceipt);
+                                                }
+                                            ).catch(function (error) {
+                                                console.log(error);
+                                            }
+                                        );
+                                    };
+
+
+                                    $scope.setTime = function () {
+
+                                        console.log("setTime started");
+
+                                        var startTime = 1509051600;
+                                        var endTime = 1511815500;
+
+                                        var txParameters = {};
+                                        txParameters.from = web3.eth.defaultAccount;
+                                        txParameters.gas = 4000000;
+
+                                        $scope.contract.startSale(
+                                            startTime,
+                                            endTime,
+                                            txParameters
+                                        )
+                                            .then(function (tx) {
+                                                    $scope.transactions.push(tx);
+                                                    $scope.alertInfo = tx;
+                                                    $scope.startingSaleInProgress = false;
+                                                    $scope.$apply(); //
+                                                }
+                                            ).catch(function (error) {
+                                                $scope.alertDanger = error.toString();
+                                                $log.error(error);
+                                                $scope.startingSaleInProgress = false;
+                                                $scope.$apply();
+                                            }
+                                        );
+                                    };
+
+                                    // $scope.newContractOwner;
+                                    $scope.changeOwnerTo = function () {
+
+                                        $scope.changeOwnerToWorking = true;
+
+                                        console.log("$scope.changeOwnerTo: ", $scope.newContractOwner);
+
+                                        $scope.contract.changeOwner($scope.newContractOwner)
+                                            .then(function (txReceipt) {
+                                                    $scope.getOwner(); // <<<< ---- !!!
+                                                    $log.debug(txReceipt);
+                                                    $scope.transactions.push(txReceipt);
+                                                }
+                                            ).catch(function (error) {
+                                                $log.error(error);
+                                            }
+                                        );
+                                    };
+
+                                    $scope.changePriceSetterTo = function () {
+
+                                        // function changePriceSetter(address _priceSetter) public onlyBy(owner) returns (bool success) {
+                                        // gas: 43276
+                                        // tx example: https://etherscan.io/tx/0xa7436d4c5d79c9ab5f281a70badf3e07794f7469510a9d68e70fc2d5af9a6099
+
+                                        console.log("$scope.changeOwnerTo  started");
+
+                                        // var txParameters = {};
+                                        // txParameters.from = web3.eth.defaultAccount;
+                                        // txParameters.gas = 4000000;
+                                        $scope.contract.changePriceSetter($scope.newPriceSetter)
+                                            .then(function (txReceipt) {
+                                                    console.log(txReceipt);
+                                                    $scope.transactions.push(txReceipt);
+                                                }
+                                            ).catch(function (error) {
+                                                console.log(error);
+                                            }
+                                        );
+                                    };
+
+                                    /*
+                                    /!* ---------- START SALE: *!/
                                     // function startSale(uint256 _startUnixTime, uint256 _endUnixTime) public onlyBy(owner) returns (bool success){
                                     $scope._startUnixTime = Date.now();
                                     $scope._startUnixTimeString = Date.now();
@@ -349,6 +497,7 @@ app.controller('admin', [
                                             }
                                         );
                                     }; // end startSale ()
+                                    */
 
                                     // --------------- END of functions
                                 }

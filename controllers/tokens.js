@@ -172,14 +172,14 @@ app.controller('tokens', [
                                     $scope.getSaleStartAndEndDates = function () {
                                         $scope.contract.saleStartUnixTime.call().then(
                                             function (saleStartUnixTime) {
-                                                console.log("saleStartUnixTime :", saleStartUnixTime);
-                                                console.log("saleStartUnixTime.toNumber() :", saleStartUnixTime.toNumber() * 1000);
+                                                console.log("saleStartUnixTime.toNumber() :", saleStartUnixTime.toNumber());
                                                 $scope.saleStartDate = new Date(saleStartUnixTime.toNumber() * 1000);
                                                 $scope.$apply(); //
                                                 $log.info('$scope.saleStartDate: ', $scope.saleStartDate);
 
                                                 $scope.contract.saleEndUnixTime.call().then(
                                                     function (saleEndUnixTime) {
+                                                        console.log("saleEndtUnixTime.toNumber() :", saleEndUnixTime.toNumber());
                                                         $scope.saleEndDate = new Date(saleEndUnixTime.toNumber() * 1000);
                                                         $scope.$apply(); //
                                                         $log.info('$scope.saleEndDate: ', $scope.saleEndDate);

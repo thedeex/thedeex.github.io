@@ -40,83 +40,151 @@ angular.element(document.getElementById('tokensCtrl')).scope();
         <div class="row" ng-hide="noAccountsDetected">
 
             <div class="col-xs-6">
+                <!--
+                                <div id="startSale">
 
-                <div id="startSale">
+                                    <h4><strong>startSale</strong></h4>
 
-                    <h4><strong>startSale</strong></h4>
+                                    &lt;!&ndash;
+                                    $scope._startUnixTime
+                                    $scope._endUnixTime
+                                    &ndash;&gt;
 
-                    <!--
-                    $scope._startUnixTime
-                    $scope._endUnixTime
-                    -->
+                                    <form class="form-inline">
+                                        <div class="form-group">
 
-                    <form class="form-inline">
-                        <div class="form-group">
+                                            <div class="input-group">
+                                                Start (Unix Time): <br>
+                                                &lt;!&ndash; see: http://stackoverflow.com/questions/26293769/how-to-parseint-in-angular-js &ndash;&gt;
+                                                &lt;!&ndash;<input type="number" ng-model="sumWei" class="form-control" name="sumWei" size="50">&ndash;&gt;
+                                                &lt;!&ndash; https://stackoverflow.com/questions/19011861/is-there-a-float-input-type-in-html5 &ndash;&gt;
+                                                <input type="number" step="1" min=0 ng-model="_startUnixTime"
+                                                       class="form-control"
+                                                       name="_startUnixTime"
+                                                       size="50"> ( Time:
+                                                {{unixTimeToDateString(_startUnixTime)}}
+                                                )
+                                            </div>
+                                        </div>
+                                        <br>
 
-                            <div class="input-group">
-                                Start (Unix Time): <br>
-                                <!-- see: http://stackoverflow.com/questions/26293769/how-to-parseint-in-angular-js -->
-                                <!--<input type="number" ng-model="sumWei" class="form-control" name="sumWei" size="50">-->
-                                <!-- https://stackoverflow.com/questions/19011861/is-there-a-float-input-type-in-html5 -->
-                                <input type="number" step="1" min=0 ng-model="_startUnixTime"
-                                       class="form-control"
-                                       name="_startUnixTime"
-                                       size="50"> ( Time:
-                                {{unixTimeToDateString(_startUnixTime)}}
-                                )
-                            </div>
-                        </div>
+                                        <div class="input-group">
+                                            End (Unix Time): <br>
+                                            &lt;!&ndash; see: http://stackoverflow.com/questions/26293769/how-to-parseint-in-angular-js &ndash;&gt;
+                                            &lt;!&ndash;<input type="number" ng-model="sumWei" class="form-control" name="sumWei" size="50">&ndash;&gt;
+                                            &lt;!&ndash; https://stackoverflow.com/questions/19011861/is-there-a-float-input-type-in-html5 &ndash;&gt;
+                                            <input type="number" step="1" min=0 ng-model="_endUnixTime" class="form-control"
+                                                   name="_endUnixTime"
+                                                   size="50"> ( Time:
+                                            {{unixTimeToDateString(_endUnixTime)}}
+                                            )
+                                        </div>
+
+                                        <br>
+                                        <button ng-click="startSale()"
+                                                ng-class="{disabled: buyTokensTxInProgress}"
+                                                class="btn btn-danger">
+                                            Start sale!
+                                        </button>
+                                        <span ng-show="buyTokensTxInProgress" title="loading...">
+                                            <i class="fa fa-refresh fa-spin fa-fw"></i>
+                                        </span>
+                                    </form>
+
+                                    <br>
+                                    <div class="alert alert-success alert-dismissible" role="alert" ng-show="buyTokensSuccess">
+                                        &lt;!&ndash;<button type="button" class="close" data-dismiss="alert">&ndash;&gt;
+                                        <button type="button" class="close">
+                                            <span ng-click="buyTokensSuccess=null">&times;</span>
+                                        </button>
+                                        {{buyTokensSuccess}}<br>
+                                        <a ng-href="{{contractDeployed[currentNetwork.network_id].etherscanLinkPrefix}}/tx/{{buyTokensSuccessTx}}"
+                                           target="_blank">
+                                            transaction data
+                                        </a>
+                                    </div>
+
+                                    &lt;!&ndash;<div class="alert alert-danger alert-dismissible" role="alert" ng-show="buyTokensError">&ndash;&gt;
+                                    <div class="alert alert-danger" role="alert" ng-show="buyTokensError">
+                                        <br>
+                                        &lt;!&ndash;https://stackoverflow.com/questions/20494887/my-bootstrap-alert-will-not-display-after-being-closed  &ndash;&gt;
+                                        &lt;!&ndash; https://stackoverflow.com/a/29820181 &ndash;&gt;
+                                        &lt;!&ndash;<button type="button" class="close" data-dismiss="alert">&ndash;&gt;
+                                        <button type="button" class="close">
+                                            <span ng-click="buyTokensError=null">&times;</span>
+                                        </button>
+                                        {{buyTokensError}}
+                                    </div>
+
+                                </div>
+
+                 -->
+                <!-- ==========     ========== -->
+
+                <div id="withdrawAllToOwner">
+                    <button class="btn btn-danger" type="button" ng-click="withdrawAllToOwner()">
+                        Withdraw All To Owner
+                    </button>
+                    <div ng-show="withdrawAllToOwnerTxReceipt">
                         <br>
-
-                        <div class="input-group">
-                            End (Unix Time): <br>
-                            <!-- see: http://stackoverflow.com/questions/26293769/how-to-parseint-in-angular-js -->
-                            <!--<input type="number" ng-model="sumWei" class="form-control" name="sumWei" size="50">-->
-                            <!-- https://stackoverflow.com/questions/19011861/is-there-a-float-input-type-in-html5 -->
-                            <input type="number" step="1" min=0 ng-model="_endUnixTime" class="form-control"
-                                   name="_endUnixTime"
-                                   size="50"> ( Time:
-                            {{unixTimeToDateString(_endUnixTime)}}
-                            )
-                        </div>
-
+                        {{withdrawAllToOwnerTxReceipt}}
                         <br>
-                        <button ng-click="startSale()"
-                                ng-class="{disabled: buyTokensTxInProgress}"
-                                class="btn btn-danger">
-                            Start sale!
-                        </button>
-                        <span ng-show="buyTokensTxInProgress" title="loading...">
-                            <i class="fa fa-refresh fa-spin fa-fw"></i>
-                        </span>
-                    </form>
-
-                    <br>
-                    <div class="alert alert-success alert-dismissible" role="alert" ng-show="buyTokensSuccess">
-                        <!--<button type="button" class="close" data-dismiss="alert">-->
-                        <button type="button" class="close">
-                            <span ng-click="buyTokensSuccess=null">&times;</span>
-                        </button>
-                        {{buyTokensSuccess}}<br>
-                        <a ng-href="{{contractDeployed[currentNetwork.network_id].etherscanLinkPrefix}}/tx/{{buyTokensSuccessTx}}"
-                           target="_blank">
-                            transaction data
-                        </a>
                     </div>
-
-                    <!--<div class="alert alert-danger alert-dismissible" role="alert" ng-show="buyTokensError">-->
-                    <div class="alert alert-danger" role="alert" ng-show="buyTokensError">
+                    <div ng-show="withdrawAllToOwnerTxError">
                         <br>
-                        <!--https://stackoverflow.com/questions/20494887/my-bootstrap-alert-will-not-display-after-being-closed  -->
-                        <!-- https://stackoverflow.com/a/29820181 -->
-                        <!--<button type="button" class="close" data-dismiss="alert">-->
-                        <button type="button" class="close">
-                            <span ng-click="buyTokensError=null">&times;</span>
-                        </button>
-                        {{buyTokensError}}
+                        {{withdrawAllToOwnerTxError}}
+                        <br>
                     </div>
+                </div>
+
+                <hr>
+                <div id="initContract">
+                    <button class="btn btn-danger" type="button" ng-click="initContract()">
+                        initContract
+                    </button>
 
                 </div>
+                <hr>
+
+                <div id="setTokenPriceInWei">
+                    <input type="number"
+                           step="1" min=0 ng-model="newTokenPriceInWei" class="form-control"
+                           size="50">
+                    <button class="btn btn-danger" type="button" ng-click="setTokenPriceInWei()">
+                        setTokenPrice
+                    </button>
+                </div>
+                <hr>
+
+                <div id="setTime">
+                    <button class="btn btn-danger" type="button" ng-click="setTime()">
+                        setTime
+                    </button>
+                    <hr>
+                </div>
+
+
+                <div id="changePriceSetterTo">
+                    <input type="text" ng-model="newPriceSetter"
+                           class="form-control"
+                           size="50">
+                    <button class="btn btn-danger" type="button" ng-click="changePriceSetterTo()">
+                        Change Price Setter
+                    </button>
+                    <hr>
+                </div>
+
+                <div id="changeOwnerTo">
+                    <input type="text" ng-model="newContractOwner"
+                           class="form-control"
+                           size="50">
+                    <button class="btn btn-danger" type="button" ng-click="changeOwnerTo()">
+                        Change Owner To
+                    </button>
+                    <span ng-show="changeOwnerToWorking"><i class="fa fa-refresh fa-spin fa-fw"></i></span>
+                    <hr>
+                </div>
+
 
             </div>
 
