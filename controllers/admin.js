@@ -377,14 +377,27 @@ app.controller('admin', [
                                         );
                                     };
 
+                                    // TODO: set time for new sale
+                                    var startTime = 1515585600; // Human time (GMT): Wednesday, January 10, 2018 12:00:00 PM
+                                    var endTime = 1520683200; // Human time (GMT): Saturday,    March 10, 2018 12:00:00 PM
+                                    // Create a new JavaScript Date object based on the unix timestamp
+                                    // multiplied by 1000 so that the argument is in milliseconds, not seconds
+                                    // see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+                                    $scope.saleStartTime = new Date(startTime * 1000);
+                                    $scope.saleEndTime = new Date(endTime * 1000);
+                                    $scope.$apply(); // needed here
+                                    console.log('$scope.saleStartTime: ');
+                                    console.log($scope.saleStartTime);
+                                    console.log('$scope.saleEndTime');
+                                    console.log($scope.saleEndTime);
 
                                     $scope.setTime = function () {
-
                                         console.log("setTime started");
-
-                                        var startTime = 1509051600;
-                                        var endTime = 1511815500;
-
+                                        // old:
+                                        // var startTime = 1509051600;
+                                        //            new: 1515585600;
+                                        // var endTime   = 1511815500;
+                                        //            new: 1520683200;
                                         var txParameters = {};
                                         txParameters.from = web3.eth.defaultAccount;
                                         txParameters.gas = 4000000;

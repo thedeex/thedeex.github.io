@@ -137,28 +137,36 @@ angular.element(document.getElementById('tokensCtrl')).scope();
                     </div>
                 </div>
 
-                <hr>
-                <div id="initContract">
-                    <button class="btn btn-danger" type="button" ng-click="initContract()">
-                        initContract
-                    </button>
+                <!--<hr>-->
+                <!--<div id="initContract">-->
+                <!--<button class="btn btn-danger" type="button" ng-click="initContract()">-->
+                <!--initContract-->
+                <!--</button>-->
+                <!--</div>-->
 
-                </div>
                 <hr>
 
                 <div id="setTokenPriceInWei">
-                    <input type="number"
-                           step="1" min=0 ng-model="newTokenPriceInWei" class="form-control"
+                    <input type="number" step="1" min=0
+                           ng-model="newTokenPriceInWei"
+                           class="form-control"
                            size="50">
+                    <span>{{newTokenPriceInWei/1000000000000000000}}</span> &nbsp ETH <br>
                     <button class="btn btn-danger" type="button" ng-click="setTokenPriceInWei()">
-                        setTokenPrice
+                        Set Token Price In Wei
                     </button>
                 </div>
                 <hr>
 
                 <div id="setTime">
+                    new sale start time:
+                    <span style="color: red">{{saleStartTime | date:'yyyy-MM-dd HH:mm:ss Z'}}</span>
+                    <br>
+                    new sale end time:
+                    <span style="color: red">{{saleEndTime | date:'yyyy-MM-dd HH:mm:ss Z'}}</span>
+                    <br>
                     <button class="btn btn-danger" type="button" ng-click="setTime()">
-                        setTime
+                        ( ! ) Start New Sale
                     </button>
                     <hr>
                 </div>
@@ -167,6 +175,7 @@ angular.element(document.getElementById('tokensCtrl')).scope();
                 <div id="changePriceSetterTo">
                     <input type="text" ng-model="newPriceSetter"
                            class="form-control"
+                           placeholder="eth address"
                            size="50">
                     <button class="btn btn-danger" type="button" ng-click="changePriceSetterTo()">
                         Change Price Setter
@@ -177,6 +186,7 @@ angular.element(document.getElementById('tokensCtrl')).scope();
                 <div id="changeOwnerTo">
                     <input type="text" ng-model="newContractOwner"
                            class="form-control"
+                           placeholder="eth address"
                            size="50">
                     <button class="btn btn-danger" type="button" ng-click="changeOwnerTo()">
                         Change Owner To
