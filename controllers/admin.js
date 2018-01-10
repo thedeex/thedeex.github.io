@@ -381,7 +381,7 @@ app.controller('admin', [
                                     // see
                                     // https://www.epochconverter.com
                                     // http://www.onlineconversion.com/unix_time.htm
-                                    var startTime = 1515625200; // GMT: Wednesday, January 10, 2018 11:00:00 PM
+                                    var startTime = 1515627000; // GMT: Wednesday, January 10, 2018 11:30:00 PM
                                     var endTime = 1519826400; // GMT: Wednesday, February 28, 2018 2:00:00 PM
                                     // Create a new JavaScript Date object based on the unix timestamp
                                     // multiplied by 1000 so that the argument is in milliseconds, not seconds
