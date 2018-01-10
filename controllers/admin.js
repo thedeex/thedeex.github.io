@@ -378,7 +378,8 @@ app.controller('admin', [
                                     };
 
                                     // TODO: set time for new sale
-                                    var startTime = 1515585600; // Human time (GMT): Wednesday, January 10, 2018 12:00:00 PM
+                                    //
+                                    var startTime = 1515612600; // Human time (GMT): Wednesday, January 10, 2018 7:30:00 PM
                                     var endTime = 1520683200; // Human time (GMT): Saturday,    March 10, 2018 12:00:00 PM
                                     // Create a new JavaScript Date object based on the unix timestamp
                                     // multiplied by 1000 so that the argument is in milliseconds, not seconds
@@ -395,7 +396,6 @@ app.controller('admin', [
                                         console.log("setTime started");
                                         // old:
                                         // var startTime = 1509051600;
-                                        //            new: 1515585600;
                                         // var endTime   = 1511815500;
                                         //            new: 1520683200;
                                         var txParameters = {};
