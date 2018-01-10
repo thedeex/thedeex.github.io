@@ -381,9 +381,8 @@ app.controller('admin', [
                                     // see
                                     // https://www.epochconverter.com
                                     // http://www.onlineconversion.com/unix_time.htm
-                                    // var startTime = 1515612600; // Human time (GMT): Wednesday, January 10, 2018 7:30:00 PM
-                                    var startTime =  1515625200; // Human time (GMT): Wednesday, January 10, 2018 11:00:00 PM
-                                    var endTime = 1520683200; // Human time (GMT): Saturday,    March 10, 2018 12:00:00 PM
+                                    var startTime = 1515625200; // GMT: Wednesday, January 10, 2018 11:00:00 PM
+                                    var endTime = 1519826400; // GMT: Wednesday, February 28, 2018 2:00:00 PM
                                     // Create a new JavaScript Date object based on the unix timestamp
                                     // multiplied by 1000 so that the argument is in milliseconds, not seconds
                                     // see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
@@ -400,7 +399,6 @@ app.controller('admin', [
                                         // old:
                                         // var startTime = 1509051600;
                                         // var endTime   = 1511815500;
-                                        //            new: 1520683200;
                                         var txParameters = {};
                                         txParameters.from = web3.eth.defaultAccount;
                                         txParameters.gas = 4000000;
